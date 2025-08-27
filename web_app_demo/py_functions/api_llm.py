@@ -1,7 +1,7 @@
 # api_test.py
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
-api_key="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"
+
 MODEL = "Qwen/Qwen2.5-1.5B-Instruct"   # small, works on M1 Pro
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 dtype = torch.float16 if device == "mps" else torch.float32
