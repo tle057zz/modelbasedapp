@@ -13,6 +13,9 @@ tokenizers>=0.13.0
 numpy>=1.24.0
 requests>=2.31.0
 
+# Production WSGI server
+gunicorn>=21.2.0
+
 # Optional: For better performance on Apple Silicon
 # Uncomment if you want to use Metal Performance Shaders
 # torch-audio  # Only if you need audio processing
