@@ -5,9 +5,9 @@ from flask import Flask, render_template, send_from_directory, request, jsonify
 import os
 
 # Create Flask application instance
-# static_folder='dist' serves the React build files
-# template_folder='dist' serves the React index.html
-app = Flask(__name__, static_folder='dist', template_folder='dist', static_url_path='')
+# Serve built React assets from dist/ when present. Templates fallback lives in templates/html
+# We expose custom routes for CSS and JS under /css and /js when using the fallback template
+app = Flask(__name__, static_folder='dist', template_folder='templates/html', static_url_path='')
 
 # Setup file paths for serving static assets (CSS, JS)
 # These paths allow us to serve CSS and JS files from custom template subdirectories
@@ -45,12 +45,23 @@ def index():
     """
     Main page route - serves the React chat interface.
     When user visits http://127.0.0.1:5000/, this function runs.
-    render_template() finds dist/index.html (React build output).
+    If a React build exists in dist/index.html, serve that; otherwise render the Flask template.
     """
+    dist_index = os.path.join(app.static_folder or '', 'index.html')
+    if app.static_folder and os.path.exists(dist_index):
+        return send_from_directory(app.static_folder, 'index.html')
     return render_template('index.html')
 
 
-# Remove the custom static route - Flask will handle it automatically with static_url_path=''
+# Serve CSS and JS assets from templates subfolders
+@app.route('/css/<path:filename>')
+def css_file(filename):
+    return send_from_directory(CSS_DIR, filename)
+
+
+@app.route('/js/<path:filename>')
+def js_file(filename):
+    return send_from_directory(JS_DIR, filename)
 
 
 @app.post('/api/send')
