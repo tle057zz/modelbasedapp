@@ -1,0 +1,143 @@
+/* CSS Styles for Chat Interface */
+/* This file controls how the web page looks and behaves */
+
+/* Root-level CSS variables - tells browser to support light/dark mode */
+:root { color-scheme: light dark; }
+
+/* Make page take full height of browser window */
+html, body {
+  height: 100%;
+}
+
+/* Base styling for the entire page */
+body {
+  /* Modern font stack - uses system fonts for native look */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  margin: 0;           /* Remove default browser margins */
+  padding: 2rem;       /* Add consistent padding around content */
+  line-height: 1.5;    /* Comfortable text spacing */
+}
+
+/* Center content and limit width for readability */
+.container {
+  max-width: 720px;    /* Don't get too wide on large screens */
+  margin: 0 auto;      /* Center horizontally */
+}
+
+/* Basic heading styles */
+h1 {
+  margin-top: 0;       /* Remove default top margin */
+  font-size: 2rem;     /* Large, readable size */
+}
+
+/* Basic button styling */
+button {
+  padding: 0.5rem 1rem;  /* Comfortable click area */
+  font-size: 1rem;       /* Match body text size */
+  cursor: pointer;       /* Show it's clickable */
+}
+
+/* Legacy output styling (from original demo) */
+#output {
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* CHAT-SPECIFIC STYLING */
+
+/* Main chat container */
+.chat {
+  padding-bottom: 6rem; /* Leave space at bottom for fixed input form */
+}
+
+/* Individual message container (you/answer pair) */
+.message {
+  margin: 1rem 0 2rem;  /* Vertical spacing between messages */
+}
+
+/* "you:" and "answer:" labels */
+.message .label {
+  font-weight: 600;           /* Bold text */
+  margin-bottom: 0.25rem;     /* Small gap before textarea */
+}
+
+/* Text areas that display messages */
+.message-box {
+  width: 100%;                              /* Full width of container */
+  box-sizing: border-box;                   /* Include padding in width calculation */
+  padding: 0.75rem;                         /* Internal spacing */
+  border: 1px solid rgba(127,127,127,.4);   /* Subtle border */
+  border-radius: 8px;                       /* Rounded corners */
+  background: transparent;                  /* Inherit parent background */
+  color: inherit;                           /* Inherit parent text color */
+  resize: none;                             /* Prevent user from resizing */
+}
+
+/* Different heights for you vs answer textareas */
+.message.you .message-box { height: 160px; }      /* Taller for user input */
+.message.answer .message-box { height: 120px; }   /* Shorter for AI response */
+
+/* BOTTOM INPUT FORM (COMPOSER) */
+
+/* Fixed input bar at bottom of screen */
+.composer {
+  position: fixed;        /* Stays in place when scrolling */
+  left: 0;               /* Stretch full width */
+  right: 0;              
+  bottom: 0;             /* Stick to bottom of screen */
+  display: flex;         /* Horizontal layout for input + button */
+  gap: 0.5rem;          /* Space between input and button */
+  padding: 1rem 2rem;   /* Internal spacing */
+  
+  /* Glassmorphism effect - semi-transparent with blur */
+  background: rgba(240,240,240,.6);         /* Light semi-transparent background */
+  -webkit-backdrop-filter: blur(6px);       /* Blur effect (Safari) */
+  backdrop-filter: blur(6px);               /* Blur effect (other browsers) */
+  border-top: 1px solid rgba(127,127,127,.3); /* Subtle top border */
+}
+
+/* Text input field inside composer */
+.composer input[type="text"] {
+  flex: 1;                                  /* Take up remaining space */
+  padding: 0.6rem 0.8rem;                   /* Comfortable input padding */
+  border: 1px solid rgba(127,127,127,.4);   /* Subtle border */
+  border-radius: 8px;                       /* Rounded corners */
+  background: white;                        /* Solid background */
+  color: #111;                              /* Dark text */
+}
+
+/* LOADING INDICATOR */
+
+/* Temporary message shown while waiting for AI response */
+.temporary_h1 {
+  text-align: center;                       /* Center the text */
+  color: #666;                              /* Gray text color */
+  font-size: 1rem;                          /* Same size as body text */
+  font-weight: normal;                      /* Not bold */
+  margin: 1rem 0;                           /* Vertical spacing */
+  padding: 0.5rem;                          /* Internal spacing */
+  background: rgba(240,240,240,.3);         /* Very light background */
+  border-radius: 8px;                       /* Rounded corners */
+}
+
+/* DARK MODE SUPPORT */
+/* These styles apply when user has dark mode enabled in their system */
+@media (prefers-color-scheme: dark) {
+  /* Dark theme for composer (input bar) */
+  .composer {
+    background: rgba(20,20,20,.6);              /* Dark semi-transparent background */
+    border-top-color: rgba(255,255,255,.1);     /* Light border for contrast */
+  }
+  
+  /* Dark theme for text input */
+  .composer input[type="text"] {
+    background: #1f1f1f;    /* Dark background */
+    color: #f5f5f5;         /* Light text */
+  }
+  
+  /* Dark theme for loading indicator */
+  .temporary_h1 {
+    color: #999;                           /* Lighter gray text */
+    background: rgba(255,255,255,.05);     /* Very subtle light background */
+  }
+}

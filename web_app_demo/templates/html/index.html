@@ -1,0 +1,67 @@
+<!-- HTML Structure for Chat Interface -->
+<!-- This file defines the structure and layout of the chat web page -->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Responsive design: makes page work on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Dynamic title using Flask template syntax -->
+  <!-- {{ title or 'Flask Demo' }} means: use 'title' variable if provided, otherwise 'Flask Demo' -->
+  <title>{{ title or 'Flask Demo' }}</title>
+  
+  <!-- Load CSS stylesheet using Flask's url_for() function -->
+  <!-- This generates the correct URL to /css/style.css route -->
+  <link rel="stylesheet" href="{{ url_for('css_file', filename='style.css') }}">
+  
+  <!-- Inline CSS for fallback styling -->
+  <style>
+    /* Fallback in case CSS route fails */
+    .no-css-warning { display: none; }
+  </style>
+  
+  <!-- Hide JavaScript-dependent elements if JS is disabled -->
+  <noscript>
+    <style>.needs-js { display: none; }</style>
+  </noscript>
+</head>
+<body>
+  <!-- Main content area containing all chat messages -->
+  <!-- id="messages" allows JavaScript to find this container -->
+  <!-- Classes: container (centers content), chat (chat-specific styling) -->
+  <main class="container chat" id="messages">
+    
+    <!-- First message pair - "you" section -->
+    <!-- This shows the user's input text -->
+    <section class="message you">
+      <div class="label">you:</div>
+      <!-- readonly prevents user from editing this field directly -->
+      <!-- JavaScript will populate this with the user's message -->
+      <textarea id="youText" class="message-box" placeholder="Your message will appear here" readonly></textarea>
+    </section>
+
+    <!-- First message pair - "answer" section -->
+    <!-- This shows the AI's response -->
+    <section class="message answer">
+      <div class="label">answer:</div>
+      <!-- JavaScript will populate this with the AI's response -->
+      <textarea id="answerText" class="message-box" placeholder="Answer will appear here" readonly></textarea>
+    </section>
+  </main>
+
+  <!-- Input form at bottom of page -->
+  <!-- autocomplete="off" prevents browser from suggesting previous entries -->
+  <form id="composer" class="composer" autocomplete="off">
+    <!-- Main text input where user types their message -->
+    <input id="composerInput" type="text" placeholder="Type here..." />
+    <!-- Submit button - aria-label helps screen readers -->
+    <button id="sendBtn" type="submit" aria-label="Send">Send</button>
+  </form>
+
+  <!-- Load JavaScript file using Flask's url_for() function -->
+  <!-- This handles form submission and API communication -->
+  <script src="{{ url_for('js_file', filename='app.js') }}"></script>
+</body>
+</html>
