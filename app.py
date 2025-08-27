@@ -53,7 +53,8 @@ def index():
     When user visits http://127.0.0.1:5000/, this function runs.
     If a React build exists in dist/index.html, serve that; otherwise render the Flask template.
     """
-    os.system('export LOAD_LLM=1')
+    # Do not attempt to export environment variables from inside a request handler.
+    # Configure LOAD_LLM at process startup via your hosting provider's env vars.
     dist_index = os.path.join(app.static_folder or '', 'index.html')
     if app.static_folder and os.path.exists(dist_index):
         return send_from_directory(app.static_folder, 'index.html')
