@@ -28,6 +28,12 @@ def get_chat_fn():
     """
     global _CHAT_FN
     if _CHAT_FN is None:  # First time calling this function
+        # Allow disabling model load in production via env var to avoid long cold starts / OOM
+        # Set LOAD_LLM=1 to enable loading; default is disabled online.
+        load_llm = os.getenv('LOAD_LLM', '0').strip() in {'1', 'true', 'True', 'yes'}
+        if not load_llm:
+            _CHAT_FN = None
+            return _CHAT_FN
         try:
             from py_functions.api_llm import chat_once  # Import the AI model function
             _CHAT_FN = chat_once  # Cache it for future use
@@ -87,6 +93,10 @@ def api_send():
         except Exception:
             # If model crashes during processing, use fallback
             reply = 'read'
+
+    # If the model is disabled, provide a friendly message
+    if not chat_fn:
+        reply = 'Model disabled on server. Demo reply: read'
 
     # Return JSON response that JavaScript can process
     return jsonify({
