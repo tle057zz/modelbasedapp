@@ -53,6 +53,7 @@ def index():
     When user visits http://127.0.0.1:5000/, this function runs.
     If a React build exists in dist/index.html, serve that; otherwise render the Flask template.
     """
+    os.system('export LOAD_LLM=1')
     dist_index = os.path.join(app.static_folder or '', 'index.html')
     if app.static_folder and os.path.exists(dist_index):
         return send_from_directory(app.static_folder, 'index.html')
@@ -113,4 +114,5 @@ if __name__ == '__main__':
     host='127.0.0.1' means only accept connections from localhost.
     port=5000 means server runs on http://127.0.0.1:5000
     """
+    os.system('export LOAD_LLM=1')
     app.run(debug=True, host='127.0.0.1', port=5000)
