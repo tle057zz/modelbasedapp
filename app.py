@@ -115,4 +115,7 @@ if __name__ == '__main__':
     port=5000 means server runs on http://127.0.0.1:5000
     """
     os.system('export LOAD_LLM=1')
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    host = os.getenv('HOST', '127.0.0.1')
+    # Prefer PORT, then FLASK_RUN_PORT, default 5000
+    port = int(os.getenv('PORT', os.getenv('FLASK_RUN_PORT', '5000')))
+    app.run(debug=True, host=host, port=port)
