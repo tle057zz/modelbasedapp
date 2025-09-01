@@ -2,7 +2,11 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-MODEL = "Qwen/Qwen2.5-1.5B-Instruct"   # small, works on M1 Pro
+# Very lightweight models for free deployment
+MODEL = "microsoft/DialoGPT-small"   # 117M params, minimal resources
+# MODEL = "distilgpt2"   # 82M params, even smaller
+# MODEL = "Qwen/Qwen2.5-1.5B-Instruct"   # 1.5B - too big for free tiers
+# MODEL = "meta-llama/Meta-Llama-3.1-8B-Instruct"   # 8B - way too big
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 dtype = torch.float16 if device == "mps" else torch.float32
 
@@ -27,25 +31,22 @@ system = "You are a helpful assistant. Give concise, accurate answers without un
 history = []
 
 def chat_once(user_text: str) -> str:
-    # For simpler, cleaner responses, we'll use minimal history
-    # Just create a simple prompt without complex history
-    prompt = f"System: You are a helpful assistant. Give a short, direct answer.\nUser: {user_text}\nAssistant:"
-
-    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    # DialoGPT expects conversation format, not system prompts
+    # Use the input directly for better compatibility
+    inputs = tokenizer.encode(user_text + tokenizer.eos_token, return_tensors="pt").to(device)
     with torch.no_grad():
         out = model.generate(
-            **inputs,
-            max_new_tokens=100,  # Reduced from 256 to get shorter responses
+            inputs,
+            max_new_tokens=50,  # Very short responses for free tier
             do_sample=True,
             temperature=0.7,
             top_p=0.9,
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.eos_token_id  # Add padding token
+            pad_token_id=tokenizer.eos_token_id
         )
-    text = tokenizer.decode(out[0], skip_special_tokens=True)
     
-    # Extract only the assistant's response
-    reply = text.split("Assistant:", 1)[-1].strip()
+    # Decode only the new tokens (response part)
+    input_len = inputs.shape[1]
+    reply = tokenizer.decode(out[0][input_len:], skip_special_tokens=True).strip()
     
     # Clean up any repeated text or previous conversation fragments
     if "User:" in reply:
@@ -71,14 +72,18 @@ def chat_once(user_text: str) -> str:
         if len(sentences) > 1 and sentences[-2]:  # If there's a complete sentence before the period
             reply = '.'.join(sentences[:-1]).strip() + '.'
     
-    # Limit response length for chat interface
-    if len(reply) > 200:
+    # Limit response length for free tier (smaller limit)
+    if len(reply) > 100:
         # Find the last complete sentence within limit
-        sentences = reply[:200].split('.')
+        sentences = reply[:100].split('.')
         if len(sentences) > 1:
             reply = '.'.join(sentences[:-1]).strip() + '.'
         else:
-            reply = reply[:200].strip() + "..."
+            reply = reply[:100].strip() + "..."
+    
+    # Fallback for empty responses
+    if not reply or len(reply.strip()) < 2:
+        reply = "I understand your message."
     
     history.append((user_text, reply))
     return reply

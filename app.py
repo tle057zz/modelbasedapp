@@ -29,8 +29,8 @@ def get_chat_fn():
     global _CHAT_FN
     if _CHAT_FN is None:  # First time calling this function
         # Allow disabling model load in production via env var to avoid long cold starts / OOM
-        # Set LOAD_LLM=1 to enable loading; default is disabled online.
-        load_llm = os.getenv('LOAD_LLM', '0').strip() in {'1', 'true', 'True', 'yes'}
+        # With lightweight model, default to enabled. Set LOAD_LLM=0 to disable.
+        load_llm = os.getenv('LOAD_LLM', '1').strip() in {'1', 'true', 'True', 'yes'}
         if not load_llm:
             _CHAT_FN = None
             return _CHAT_FN
